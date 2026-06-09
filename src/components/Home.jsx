@@ -2,6 +2,7 @@ import { useState } from "react"
 import { Link } from "react-router-dom"
 import Fruits from "./Fruits"
 import App from "../App"
+import Auth from "./Auth"
 
 const Home = () => {
 
@@ -16,6 +17,7 @@ const Home = () => {
                 <button>
                     <Link to={'/404'}>Not Found</Link>
                 </button>
+                <Auth />
                 <App />
             </div>
         </>
