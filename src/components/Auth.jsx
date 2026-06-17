@@ -19,6 +19,9 @@ const Auth = () => {
     //для авторизации
     const [isAuth, setIsAuth] = useState(!!localStorage.getItem('accessToken'))
 
+    const [role, setRole] = useState(localStorage.getItem('userRole') || '')
+
+    const [error, setError] = useState('')
 
 
     // Универсальный обработчик ввода
@@ -53,16 +56,31 @@ const Auth = () => {
         })
         const data = await response.json()
 
-        localStorage.setItem('accessToken', data.accessToken)
-        localStorage.setItem('refreshToken', data.refreshToken)
 
-        setIsAuth(true)
+        if (response.ok) {
+            localStorage.setItem('accessToken', data.accessToken)
+            localStorage.setItem('refreshToken', data.refreshToken)
+
+
+            const detectedRole = data.username === 'emilys' ? 'admin' : 'user'
+
+            localStorage.setItem('userRole', detectedRole)
+            setRole(detectedRole)
+
+            setError('')
+            setIsAuth(true)
+        }
+        else {
+            setError('Неверный логин или пароль')
+        }
     }
 
     const handleLogout = () => {
         localStorage.removeItem('accessToken')
         localStorage.removeItem('refreshToken')
+        localStorage.removeItem('userRole')
 
+        setError('')
         setIsAuth(false)
     }
 
@@ -74,6 +92,7 @@ const Auth = () => {
                 {isAuth ? (<div className="text-center">
                     <h2 className="text-xl font-bold mb-4"><span className="text-green-600">Вы успешно авторизованы!</span></h2>
                     <p className="mb-4 text-gray-700">Токены сохранены в вашем браузере.</p>
+                    {role === 'admin' ? <button className="bg-green-500 text-white rounded-2xl p-1.5 cursor-pointer">admin panel</button> : null}
                     <button
                         onClick={handleLogout}
                         className="bg-red-500 text-white rounded-2xl p-1.5 cursor-pointer hover:bg-red-600"
@@ -83,6 +102,7 @@ const Auth = () => {
                 </div>) : (/* Старая форма авторизации (показывается, если не авторизован) */
                     <form onSubmit={handleSubmit}>
                         <div>
+                            {error && <p className="text-red-500 font-bold mb-2">{error}</p>}
                             <input
                                 className="bg-gray-500 text-white rounded-2xl mt-2 mb-2 p-1.5"
                                 type="text"
