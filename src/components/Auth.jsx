@@ -1,7 +1,7 @@
 import { useState } from "react"
 import Registration from "./Registration"
-
-
+import AdminDashboard from "./AdminDashboard"
+import UserDashboard from "./UserDashboard"
 
 const Auth = () => {
     //useState
@@ -92,7 +92,8 @@ const Auth = () => {
                 {isAuth ? (<div className="text-center">
                     <h2 className="text-xl font-bold mb-4"><span className="text-green-600">Вы успешно авторизованы!</span></h2>
                     <p className="mb-4 text-gray-700">Токены сохранены в вашем браузере.</p>
-                    {role === 'admin' ? <button className="bg-green-500 text-white rounded-2xl p-1.5 cursor-pointer">admin panel</button> : null}
+                    {role === 'admin' ? <AdminDashboard /> : <UserDashboard />}
+                    {/* {role === 'admin' ? <button className="bg-green-500 text-white rounded-2xl p-1.5 cursor-pointer">admin panel</button> : null} */}
                     <button
                         onClick={handleLogout}
                         className="bg-red-500 text-white rounded-2xl p-1.5 cursor-pointer hover:bg-red-600"
