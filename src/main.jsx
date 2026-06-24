@@ -6,6 +6,9 @@ import App from './App.jsx'
 import Fruits from './components/Fruits.jsx'
 import Home from './components/Home.jsx'
 import NotFound from './components/NotFound.jsx'
+import Auth from './components/Auth.jsx'
+import UserDashboard from './components/UserDashboard.jsx'
+import AdminDashboard from './components/AdminDashboard.jsx'
 
 const router = createBrowserRouter([
   {
@@ -17,8 +20,20 @@ const router = createBrowserRouter([
     element: <Fruits />
   },
   {
-    path: '/404',
+    path: '*',
     element: <NotFound />
+  },
+  {
+    path: '/login',
+    element: <Auth />
+  },
+  {
+    path: '/dashboard',
+    element: <UserDashboard />
+  },
+  {
+    path: '/admin',
+    element: <AdminDashboard />
   }
 ])
 
