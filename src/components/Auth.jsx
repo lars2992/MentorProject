@@ -3,8 +3,7 @@ import Registration from "./Registration"
 import { useNavigate } from "react-router-dom"
 import { loginUser } from "../api/loginUser"
 import { registerUser } from "../api/registerUser"
-import InputCustom from "./inputCustom"
-
+import InputCustom from "../utils/InputCustom";
 const Auth = () => {
     const navigate = useNavigate()
 

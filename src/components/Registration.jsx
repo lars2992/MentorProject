@@ -1,5 +1,4 @@
-import InputCustom from "./inputCustom"
-
+import InputCustom from "../utils/InputCustom";
 
 const Registration = ({ onInput, onInputChange }) => {
     return (
