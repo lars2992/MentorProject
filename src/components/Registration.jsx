@@ -1,8 +1,10 @@
+import InputCustom from "../utils/InputCustom";
+
 const Registration = ({ onInput, onInputChange }) => {
     return (
         <>
             <div>
-                <input
+                <InputCustom
                     className="bg-gray-500 text-white rounded-2xl mb-2 p-1.5"
                     type="password"
                     name="repeatPassword"
@@ -12,7 +14,7 @@ const Registration = ({ onInput, onInputChange }) => {
                 />
             </div>
             <div>
-                <input
+                <InputCustom
                     className="bg-gray-500 text-white rounded-2xl mb-2 p-1.5"
                     type="email"
                     name="email"

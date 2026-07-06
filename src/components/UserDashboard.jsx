@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
+import { getProducts } from "../api/getProducts"
 
 const UserDashboard = () => {
     const [products, setProducts] = useState([])
@@ -7,22 +8,31 @@ const UserDashboard = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-        fetch('https://dummyjson.com/products?limit=5')
-            .then(res => res.json())
-            .then(data => setProducts(data.products))
-            .catch(err => console.error('Ошибка загрузки товаров:', err))
+        // Создаем быструю асинхронную функцию прямо внутри эффекта
+        const fetchValues = async () => {
+            const data = await getProducts()
+            setProducts(data) // кладем чистый массив в стейт
+        }
+
+        fetchValues()
+
+
+        // fetch('https://dummyjson.com/products?limit=50')
+        //     .then(res => res.json())
+        //     .then(data => setProducts(data.products))
+        //     .catch(err => console.error('Ошибка загрузки товаров:', err))
     }, [])
 
-    const handleLogout = () => {
-        localStorage.removeItem('accessToken')
-        localStorage.removeItem('refreshToken')
-        localStorage.removeItem('userRole')
+    // const handleLogout = () => {
+    //     localStorage.removeItem('accessToken')
+    //     localStorage.removeItem('refreshToken')
+    //     localStorage.removeItem('userRole')
 
-        navigate('/login')
+    //     navigate('/login')
 
-        // setError('')
-        // setIsAuth(false)
-    }
+    //     // setError('')
+    //     // setIsAuth(false)
+    // }
 
     const addToCart = (product) => {
         setCart((prevCart) => [...prevCart, product])
@@ -30,7 +40,6 @@ const UserDashboard = () => {
     // Считаем общую сумму всех товаров в корзине
     // .reduce() пробегается по корзине и складывает цены
     const totalCost = cart.reduce((sum, item) => sum + item.price, 0)
-    // остановился здесь
 
     return (
         <>
@@ -41,21 +50,23 @@ const UserDashboard = () => {
                     🛒 Корзина: {cart.length} шт. | Сумма: ${totalCost.toFixed(2)}
                 </p>
             </div>
-            <button
+            {/* <button
                 onClick={handleLogout}
                 className="bg-red-500 text-white rounded-2xl p-1.5 text-sm cursor-pointer hover:bg-red-600"
             >
                 Выйти
-            </button>
-            <div className="space-y-2">
+            </button> */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 {products.map(product => (
-                    <div key={product.id} className="p-2 bg-white rounded-xl shadow-sm border border-gray-100">
-                        <p className="font-bold text-gray-800">{product.title}</p>
-                        <p className="text-sm text-gray-500">Цена: ${product.price}</p>
-                        {/* Кнопка действия */}
+                    <div key={product.id} className="p-4 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[150px]">
+                        <div>
+                            <p className="font-bold text-gray-800 text-base mb-1 line-clamp-1">{product.title}</p>
+                            <p className="text-sm font-semibold text-blue-500 mb-4">Цена: ${product.price}</p>
+                        </div>
+                        {/* Кнопка всегда будет прижата к низу карточки */}
                         <button
                             onClick={() => addToCart(product)}
-                            className="bg-blue-500 text-white text-xs px-3 py-1.5 rounded-xl hover:bg-blue-600 cursor-pointer transition-colors"
+                            className="w-full bg-blue-500 text-white text-sm font-medium py-2 rounded-xl hover:bg-blue-600 cursor-pointer transition-colors"
                         >
                             Купить
                         </button>

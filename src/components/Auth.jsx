@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react"
 import Registration from "./Registration"
 import { useNavigate } from "react-router-dom"
-
+import { loginUser } from "../api/loginUser"
+import { registerUser } from "../api/registerUser"
+import InputCustom from "../utils/InputCustom";
 const Auth = () => {
     const navigate = useNavigate()
 
@@ -45,18 +47,11 @@ const Auth = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
+        try {
+            // Передаем логин и пароль в нашу чистую JS функцию
+            const data = await loginUser(inputValue.login, inputValue.password)
 
-        const response = await fetch('https://dummyjson.com/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                username: inputValue.login,
-                password: inputValue.password,
-            })
-        })
-        const data = await response.json()
-
-        if (response.ok) {
+            // Если функция вернула data (значит все ок), сохраняем токены:
             localStorage.setItem('accessToken', data.accessToken)
             localStorage.setItem('refreshToken', data.refreshToken)
 
@@ -65,14 +60,14 @@ const Auth = () => {
 
             setError('')
 
-            // Перенаправляем на нужную страницу
             if (detectedRole === 'admin') {
                 navigate('/admin')
             } else {
                 navigate('/dashboard')
             }
-        } else {
-            setError('Неверный логин или пароль')
+        } catch (err) {
+            // Если loginUser выкинул ошибку, она упадет сюда:
+            setError(err.message || 'Неверный логин или пароль')
         }
     }
     const handleRegisterSubmit = async (event) => {
@@ -82,33 +77,22 @@ const Auth = () => {
             setError('Пароли не совпадают!')
             return
         }
+
         try {
-            const response = await fetch('https://dummyjson.com/users/add', {
-                method: 'POST',
-                headers: { 'Content-type': 'application/json' },
-                body: JSON.stringify({
-                    username: inputValue.login,
-                    password: inputValue.password,
-                    email: inputValue.email,
-                })
-            })
-            const data = await response.json()
+            const data = await registerUser(inputValue.login, inputValue.password, inputValue.email)
 
-            if (response.ok) {
-                setSuccessMessage(`Пользователь ${data.username} успешно зарегистрирован!`)
-                setError('') // Очищаем прошлые ошибки
+            setSuccessMessage(`Пользователь ${data.username} успешно зарегистрирован!`)
+            setError('') // Очищаем прошлые ошибки
 
-                // Через 3 секунды автоматически возвращаем пользователя на форму входа
-                setTimeout(() => {
-                    setSuccessMessage('')
-                    setAuthToggle({ hasAccount: true })
-                }, 3000)
-            } else {
-                setError(data.message || 'Ошибка при регистрации')
-            }
+            // Через 3 секунды переключаем на форму входа
+            setTimeout(() => {
+                setSuccessMessage('')
+                setAuthToggle({ hasAccount: true })
+            }, 3000)
+
+
         } catch (err) {
-            console.error('Ошибка:', err);
-            setError('Произошла ошибка соединения с сервером')
+            setError(err.message || 'Произошла ошибка при регистрации')
 
         }
     }
@@ -121,7 +105,7 @@ const Auth = () => {
             <form onSubmit={authToggle.hasAccount ? handleSubmit : handleRegisterSubmit}>
                 <div>
                     {error && <p className="text-red-500 font-bold mb-2">{error}</p>}
-                    <input
+                    <InputCustom
                         className="bg-gray-500 text-white rounded-2xl mt-2 mb-2 p-1.5 w-full"
                         type="text"
                         placeholder="Логин..."
@@ -132,7 +116,7 @@ const Auth = () => {
                 </div>
 
                 <div>
-                    <input
+                    <InputCustom
                         className="bg-gray-500 text-white rounded-2xl mb-2 p-1.5 w-full"
                         type="password"
                         placeholder="Пароль..."
