@@ -54,9 +54,10 @@ const Auth = () => {
             // Если функция вернула data (значит все ок), сохраняем токены:
             localStorage.setItem('accessToken', data.accessToken)
             localStorage.setItem('refreshToken', data.refreshToken)
-
-            const detectedRole = data.username === 'emilys' ? 'admin' : 'user'
+            // замена мок данных на реальные
+            const detectedRole = data.role // Берём роль прямо из базы данных Supabase!
             localStorage.setItem('userRole', detectedRole)
+
 
             setError('')
 
