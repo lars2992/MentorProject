@@ -4,7 +4,12 @@ import { useNavigate } from "react-router-dom"
 import { loginUser } from "../api/loginUser"
 import { registerUser } from "../api/registerUser"
 import InputCustom from "../utils/InputCustom";
+import { AuthContext } from "../context/AuthContext"
+import { useContext } from "react"
+
 const Auth = () => {
+    const { login, isAuth, user } = useContext(AuthContext)
+
     const navigate = useNavigate()
 
     const [authToggle, setAuthToggle] = useState({ hasAccount: true })
@@ -19,17 +24,14 @@ const Auth = () => {
 
     // ⚡️ Защита страницы входа: если токены есть, не даем сидеть на форме логина
     useEffect(() => {
-        const token = localStorage.getItem('accessToken')
-        const savedRole = localStorage.getItem('userRole')
-
-        if (token) {
-            if (savedRole === 'admin') {
+        if (isAuth && user) {
+            if (user.role === 'admin') {
                 navigate('/admin')
             } else {
                 navigate('/dashboard')
             }
         }
-    }, [navigate])
+    }, [isAuth, user, navigate])
 
     const handleInputChange = (event) => {
         const { name, value } = event.target
@@ -54,14 +56,23 @@ const Auth = () => {
             // Если функция вернула data (значит все ок), сохраняем токены:
             localStorage.setItem('accessToken', data.accessToken)
             localStorage.setItem('refreshToken', data.refreshToken)
-            // замена мок данных на реальные
-            const detectedRole = data.role // Берём роль прямо из базы данных Supabase!
-            localStorage.setItem('userRole', detectedRole)
+
+            // ТЕПЕРЬ ВМЕСТО РУЧНОЙ ЗАПИСИ РОЛИ В LOCALSTORAGE:
+            // Вызываем функцию login из контекста и передаем туда данные пользователя
+            login({
+                role: data.role,
+                id: data.id,
+                username: data.username
+            })
+
+            // // замена мок данных на реальные
+            // const detectedRole = data.role // Берём роль прямо из базы данных Supabase!
+            // localStorage.setItem('userRole', detectedRole)
 
 
             setError('')
 
-            if (detectedRole === 'admin') {
+            if (data.role === 'admin') {
                 navigate('/admin')
             } else {
                 navigate('/dashboard')

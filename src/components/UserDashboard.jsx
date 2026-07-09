@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import { getProducts } from "../api/getProducts"
+import { AuthContext } from "../context/AuthContext"
 
 const UserDashboard = () => {
     const [products, setProducts] = useState([])
     const [cart, setCart] = useState([])
+    const { isAuth, isLoading, logout } = useContext(AuthContext)
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -15,24 +17,17 @@ const UserDashboard = () => {
         }
 
         fetchValues()
-
-
-        // fetch('https://dummyjson.com/products?limit=50')
-        //     .then(res => res.json())
-        //     .then(data => setProducts(data.products))
-        //     .catch(err => console.error('Ошибка загрузки товаров:', err))
     }, [])
 
-    // const handleLogout = () => {
-    //     localStorage.removeItem('accessToken')
-    //     localStorage.removeItem('refreshToken')
-    //     localStorage.removeItem('userRole')
+    useEffect(() => {
+        if (!isLoading && !isAuth) {
+            navigate('/login')
+        }
+    }, [isAuth, isLoading, navigate])
 
-    //     navigate('/login')
-
-    //     // setError('')
-    //     // setIsAuth(false)
-    // }
+    if (isLoading) {
+        <div className="text-center mt-10 text-xl font-bold">Загрузка...</div>
+    }
 
     const addToCart = (product) => {
         setCart((prevCart) => [...prevCart, product])
@@ -50,12 +45,6 @@ const UserDashboard = () => {
                     🛒 Корзина: {cart.length} шт. | Сумма: ${totalCost.toFixed(2)}
                 </p>
             </div>
-            {/* <button
-                onClick={handleLogout}
-                className="bg-red-500 text-white rounded-2xl p-1.5 text-sm cursor-pointer hover:bg-red-600"
-            >
-                Выйти
-            </button> */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                 {products.map(product => (
                     <div key={product.id} className="p-4 bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col justify-between min-h-[150px]">

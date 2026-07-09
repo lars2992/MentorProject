@@ -10,6 +10,7 @@ import Auth from './components/Auth.jsx'
 import UserDashboard from './components/UserDashboard.jsx'
 import AdminDashboard from './components/AdminDashboard.jsx'
 import MainLayout from './components/MainLayout.jsx'
+import { AuthProvider } from './context/AuthContext.jsx'
 
 const router = createBrowserRouter([
   {
@@ -45,9 +46,14 @@ const router = createBrowserRouter([
 ])
 
 createRoot(document.getElementById('root')).render(
-  <RouterProvider router={router}>
-    <StrictMode>
-      <App />
-    </StrictMode>
-  </RouterProvider>
+  // <RouterProvider router={router}>
+  //   <StrictMode>
+  //     <App />
+  //   </StrictMode>
+  // </RouterProvider>
+  <StrictMode>
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  </StrictMode>
 )

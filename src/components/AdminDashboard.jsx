@@ -1,34 +1,45 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import ButtonCustom from "../utils/ButtonCustom";
 import { supabase } from "../api/supabaseClient";
+import { AuthContext } from "../context/AuthContext";
 
 const AdminDashboard = () => {
+    const { isAuth, user, isLoading } = useContext(AuthContext)
+
     const [users, setUsers] = useState([])
     const navigate = useNavigate()
 
-    // useEffect(() => {
-    //     fetch('https://dummyjson.com/users?limit=50')
-    //         .then(res => res.json())
-    //         .then(data => setUsers(data.users))
-    //         .catch(err => console.error('Ошибка загрузки пользователей:', err))
-    // }, [])
     useEffect(() => {
-        const fetchUsers = async () => {
-            const { data, error } = await supabase
-                .from('users')
-                .select('*')
-
-            if (error) {
-                console.error('Ошибка:', error.message)
-            } else {
-                // Не забыть положить пришедшие данные (data) в стейт:
-                setUsers(data)
+        if (!isLoading) {
+            if (!isAuth || user?.role !== 'admin') {
+                navigate('/login')
             }
         }
+    }, [isAuth, user, isLoading, navigate])
 
-        fetchUsers() // Запуск функции
-    }, [])
+
+    useEffect(() => {
+        if(isAuth && user?.role === 'admin'){
+            const fetchUsers = async () => {
+                const { data, error } = await supabase
+                    .from('users')
+                    .select('*')
+
+                if (error) {
+                    console.error('Ошибка:', error.message)
+                } else {
+                    // Не забыть положить пришедшие данные (data) в стейт:
+                    setUsers(data)
+                }
+            }
+            fetchUsers() // Запуск функции
+        }
+    }, [isAuth, user])
+
+    if (isLoading) {
+        return <div className="text-center mt-10 text-xl font-bold text-purple-600">Проверка прав администратора...</div>
+    }
 
 
     // удаление пользователя через id
@@ -41,28 +52,12 @@ const AdminDashboard = () => {
         setUsers(users.filter(user => user.id !== id))
     }
 
-    // const handleLogout = () => {
-    //     localStorage.removeItem('accessToken')
-    //     localStorage.removeItem('refreshToken')
-    //     localStorage.removeItem('userRole')
-
-    //     navigate('/login')
-    //     // setError('')
-    //     // setIsAuth(false)
-    // }
-
     return (
         <>
             <div className="mt-4 p-4 border border-gray-300 rounded-2xl bg-gray-50">
                 <h3 className="text-lg font-bold text-purple-600 mb-2">Панель Администратора: доступен список пользователей</h3>
             </div>
-            {/* Кнопка выхода теперь здесь
-            <button
-                onClick={handleLogout}
-                className="bg-red-500 text-white rounded-2xl p-1.5 text-sm cursor-pointer hover:bg-red-600"
-            >
-                Выйти
-            </button> */}
+
             <div>
                 {users.map(user => (
                     <div key={user.id} className="p-2 mt-2 bg-white rounded-xl shadow-sm border border-gray-100">
