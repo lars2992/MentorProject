@@ -4,11 +4,16 @@ import { useNavigate } from "react-router-dom"
 import { loginUser } from "../api/loginUser"
 import { registerUser } from "../api/registerUser"
 import InputCustom from "../utils/InputCustom";
-import { AuthContext } from "../context/AuthContext"
-import { useContext } from "react"
+// import { AuthContext } from "../context/AuthContext"
+// import { useContext } from "react"
+import { useAuthStore } from "../store/useAuthStore"
 
 const Auth = () => {
-    const { login, isAuth, user } = useContext(AuthContext)
+    // const { login, isAuth, user } = useContext(AuthContext)
+
+    const isAuth = useAuthStore((state) => state.isAuth)
+    const user = useAuthStore((state) => state.user)
+    const login = useAuthStore((state) => state.login)
 
     const navigate = useNavigate()
 

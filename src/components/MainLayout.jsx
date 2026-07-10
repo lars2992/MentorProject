@@ -1,9 +1,10 @@
 import { Outlet, Link, useNavigate } from "react-router-dom"
 import { AuthContext } from "../context/AuthContext"
-import { useContext } from "react"
+import {useAuthStore} from '../store/useAuthStore'
 
 const MainLayout = () => {
-    const { logout } = useContext(AuthContext)
+    const logout = useAuthStore((state)=> state.logout)
+    
     const navigate = useNavigate()
     const role = localStorage.getItem('userRole')
 

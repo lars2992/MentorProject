@@ -1,12 +1,14 @@
 import { useEffect, useState, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import { getProducts } from "../api/getProducts"
-import { AuthContext } from "../context/AuthContext"
+import { useAuthStore } from "../store/useAuthStore"
 
 const UserDashboard = () => {
     const [products, setProducts] = useState([])
     const [cart, setCart] = useState([])
-    const { isAuth, isLoading, logout } = useContext(AuthContext)
+    const isAuth = useAuthStore((state)=> state.isAuth)
+    const isLoading = useAuthStore((state)=> state.isLoading)
+
     const navigate = useNavigate()
 
     useEffect(() => {
@@ -26,7 +28,7 @@ const UserDashboard = () => {
     }, [isAuth, isLoading, navigate])
 
     if (isLoading) {
-        <div className="text-center mt-10 text-xl font-bold">Загрузка...</div>
+        return <div className="text-center mt-10 text-xl font-bold">Загрузка...</div>
     }
 
     const addToCart = (product) => {

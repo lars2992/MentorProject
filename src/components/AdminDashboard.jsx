@@ -2,10 +2,14 @@ import { useEffect, useState, useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import ButtonCustom from "../utils/ButtonCustom";
 import { supabase } from "../api/supabaseClient";
-import { AuthContext } from "../context/AuthContext";
+import { useAuthStore } from "../store/useAuthStore";
 
 const AdminDashboard = () => {
-    const { isAuth, user, isLoading } = useContext(AuthContext)
+    const isAuth = useAuthStore((state) => state.isAuth)
+    const isLoading = useAuthStore((state) => state.isLoading)
+
+    const user = useAuthStore((state)=> state.user)
+
 
     const [users, setUsers] = useState([])
     const navigate = useNavigate()
@@ -20,7 +24,7 @@ const AdminDashboard = () => {
 
 
     useEffect(() => {
-        if(isAuth && user?.role === 'admin'){
+        if (isAuth && user?.role === 'admin') {
             const fetchUsers = async () => {
                 const { data, error } = await supabase
                     .from('users')
