@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 
 export const useAuthStore = create((set) => ({
-    // 1. Наши состояния (стейт)
+    // 1. Состояния (стейт)
     user: null,
     isAuth: false,
     isLoading: true,

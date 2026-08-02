@@ -29,6 +29,7 @@ const MainLayout = () => {
                 <aside className="w-64 bg-white border-r border-gray-200 p-4 flex flex-col gap-2 shadow-sm">
                     <Link to='/dashboard' className="block px-4 py-2.5 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 font-medium transition-all">Магазин</Link>
                     <Link to='/fruits' className="block px-4 py-2.5 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 font-medium transition-all">Фрукты</Link>
+                    <Link to='/products' className="block px-4 py-2.5 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 font-medium transition-all">Продукты</Link>
                     {role === 'admin' && (<Link to='/admin' className="block px-4 py-2.5 rounded-xl text-gray-700 hover:bg-blue-50 hover:text-blue-600 font-medium transition-all">Панель админа</Link>)}
                 </aside>
                 <main className="p-6 flex-1 bg-gray-50 overflow-y-auto">

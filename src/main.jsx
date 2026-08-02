@@ -11,6 +11,8 @@ import UserDashboard from './components/UserDashboard.jsx'
 import AdminDashboard from './components/AdminDashboard.jsx'
 import MainLayout from './components/MainLayout.jsx'
 import { useAuthStore } from './store/useAuthStore.js'
+import ProductList from './components/ProductList.jsx'
+import ProtectedRoute from './components/ProtectedRoute.jsx'
 
 useAuthStore.getState().checkAuth()
 const router = createBrowserRouter([
@@ -30,13 +32,30 @@ const router = createBrowserRouter([
         path: '/dashboard',
         element: <UserDashboard />
       },
+
+
+      //защищенная группа роутеров для админа
       {
-        path: '/admin',
-        element: <AdminDashboard />
+        element: <ProtectedRoute allowedRole='admin' />,
+        children: [
+
+          {
+            path: '/admin',
+            element: <AdminDashboard />
+          }
+
+        ]
       },
+
+
+
       {
         path: '/fruits',
         element: <Fruits />
+      },
+      {
+        path: '/products',
+        element: <ProductList />
       }
     ]
   },
